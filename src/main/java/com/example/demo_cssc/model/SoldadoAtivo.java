@@ -1,13 +1,11 @@
 package com.example.demo_cssc.model;
 
 
+import com.example.demo_cssc.audit.Auditable;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.persistence.Id;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 
-import java.time.LocalDateTime;
 import java.util.Set;
 
 @Entity

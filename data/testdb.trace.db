@@ -1,0 +1,9 @@
+2025-02-27 05:43:10.579720-03:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "MISSAO_TERRESTRE" not found (this database is empty); SQL statement:
+insert into missao_terrestre (criado_por,data_criacao,data_modificacao,modificado_por,nome_missao,id) values (?,?,?,?,?,default) [42104-232]
+2025-02-27 05:43:16.896144-03:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "MISSAO_TERRESTRE" not found (this database is empty); SQL statement:
+insert into missao_terrestre (criado_por,data_criacao,data_modificacao,modificado_por,nome_missao,id) values (?,?,?,?,?,default) [42104-232]
+2025-02-27 05:43:22.300882-03:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "MISSAO_TERRESTRE" not found (this database is empty); SQL statement:
+select mt1_0.id,mt1_0.criado_por,mt1_0.data_criacao,mt1_0.data_modificacao,mt1_0.modificado_por,mt1_0.nome_missao from missao_terrestre mt1_0 [42104-232]

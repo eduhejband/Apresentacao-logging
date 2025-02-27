@@ -1,10 +1,8 @@
 package com.example.demo_cssc.model;
 
+import com.example.demo_cssc.audit.Auditable;
 import jakarta.persistence.*;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 
-import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
