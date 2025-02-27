@@ -29,15 +29,24 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable())
-            .authorizeHttpRequests(auth -> auth
-                    .requestMatchers(HttpMethod.GET, "/soldados/**", "/missoes/**").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN") // Permite USER e ADMIN no GET
-                    .requestMatchers(HttpMethod.POST, "/soldados/**", "/missoes/**").hasAuthority("ROLE_ADMIN")  // Apenas ADMIN pode criar
-                    .requestMatchers(HttpMethod.PUT, "/soldados/**", "/missoes/**").hasAuthority("ROLE_ADMIN")   // Apenas ADMIN pode editar
-                    .requestMatchers(HttpMethod.DELETE, "/soldados/**", "/missoes/**").hasAuthority("ROLE_ADMIN") // Apenas ADMIN pode deletar
-                    .anyRequest().authenticated()
-            )
-            .addFilterBefore(new TokenAuthFilter(), UsernamePasswordAuthenticationFilter.class);
+                .csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(auth -> auth
+                        // 🔥 Desabilita autenticação no Swagger
+                        .requestMatchers(
+                                "/v3/api-docs/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html",
+                                "/swagger-resources/**",
+                                "/webjars/**"
+                        ).permitAll()
+                        // 🔥 Aplica autenticação apenas nos endpoints da API
+                        .requestMatchers(HttpMethod.GET, "/soldados/**", "/missoes/**").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/soldados/**", "/missoes/**").hasAuthority("ROLE_ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/soldados/**", "/missoes/**").hasAuthority("ROLE_ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/soldados/**", "/missoes/**").hasAuthority("ROLE_ADMIN")
+                        .anyRequest().authenticated()
+                )
+                .addFilterBefore(new TokenAuthFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
@@ -51,16 +60,15 @@ public class SecurityConfig {
             String authHeader = req.getHeader("Authorization");
 
             if (authHeader == null) {
-                res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                res.getWriter().write("{\"error\": \"Acesso negado: Nenhum token fornecido\"}");
-                return;
+                chain.doFilter(request, response);
+                return;  // 🔥 Deixa passar sem autenticação
             }
 
             UserDetails userDetails;
             if (authHeader.equals(TOKEN_ADMIN)) {
                 userDetails = User.withUsername("admin")
-                        .password("") // Senha não é necessária, pois estamos usando token fixo
-                        .roles("ADMIN") // Define a role como ADMIN
+                        .password("")
+                        .roles("ADMIN")
                         .build();
             } else if (authHeader.equals(TOKEN_USER)) {
                 userDetails = User.withUsername("user")
@@ -73,7 +81,7 @@ public class SecurityConfig {
                 return;
             }
 
-            // Define o usuário autenticado no contexto do Spring Security
+            // Define usuário autenticado
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                     userDetails, null, userDetails.getAuthorities());
             SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
