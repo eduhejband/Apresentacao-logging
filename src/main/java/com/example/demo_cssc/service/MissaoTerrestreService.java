@@ -38,18 +38,30 @@ public class MissaoTerrestreService {
         missao.setNomeMissao(missaoDTO.getNomeMissao());
 
         if (missaoDTO.getSoldadosIds() != null) {
+            // Remove os soldados antigos
+            for (SoldadoAtivo soldado : missao.getSoldados()) {
+                soldado.getMissoes().remove(missao);
+                soldadoRepository.save(soldado);
+            }
+            missao.getSoldados().clear();
+
+            // Adiciona os novos soldados corretamente
             Set<SoldadoAtivo> novosSoldados = missaoDTO.getSoldadosIds().stream()
                     .map(soldadoRepository::findById)
                     .map(optional -> optional.orElseThrow(() -> new RecursoNaoEncontradoException("Soldado não encontrado")))
                     .collect(Collectors.toSet());
 
-            // 🔥 Em vez de sobrescrever, adicionamos ao conjunto existente
-            missao.getSoldados().addAll(novosSoldados);
+            missao.setSoldados(novosSoldados);
+            for (SoldadoAtivo soldado : novosSoldados) {
+                soldado.getMissoes().add(missao);
+                soldadoRepository.save(soldado);
+            }
         }
 
         MissaoTerrestre missaoAtualizada = missaoRepository.save(missao);
         return missaoTerrestreMapper.toDTO(missaoAtualizada);
     }
+
 
 
 
@@ -82,9 +94,16 @@ public class MissaoTerrestreService {
         MissaoTerrestre missao = missaoRepository.findById(id)
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Missão não encontrada"));
 
-        // Remove as associações e deleta
-        missao.getSoldados().forEach(soldado -> soldado.getMissoes().remove(missao));
+        // Atualiza a relação no lado dos Soldados
+        for (SoldadoAtivo soldado : missao.getSoldados()) {
+            soldado.getMissoes().remove(missao);
+            soldadoRepository.save(soldado); // Atualiza no banco antes de deletar a missão
+        }
+
         missao.getSoldados().clear();
+        missaoRepository.save(missao); // Salva antes de deletar
+
         missaoRepository.delete(missao);
     }
+
 }

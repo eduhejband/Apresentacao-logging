@@ -31,9 +31,9 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 🔥 Adicionado aqui
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) //  Adicionado aqui
                 .authorizeHttpRequests(auth -> auth
-                        // 🔥 Desabilita autenticação no Swagger
+                        //  Desabilita autenticação no Swagger
                         .requestMatchers(
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
@@ -41,7 +41,7 @@ public class SecurityConfig {
                                 "/swagger-resources/**",
                                 "/webjars/**"
                         ).permitAll()
-                        // 🔥 Aplica autenticação apenas nos endpoints da API
+                        //  Aplica autenticação apenas nos endpoints da API
                         .requestMatchers(HttpMethod.GET, "/soldados/**", "/missoes/**").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
                         .requestMatchers(HttpMethod.POST, "/soldados/**", "/missoes/**").hasAuthority("ROLE_ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/soldados/**", "/missoes/**").hasAuthority("ROLE_ADMIN")
@@ -64,7 +64,7 @@ public class SecurityConfig {
 
             if (authHeader == null) {
                 chain.doFilter(request, response);
-                return;  // 🔥 Deixa passar sem autenticação
+                return;  //  Deixa passar sem autenticação
             }
 
             UserDetails userDetails;

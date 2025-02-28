@@ -9,7 +9,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.time.LocalDateTime;
 
 @MappedSuperclass
-@EntityListeners(AuditingEntityListener.class) // 🔥 Garante que o Hibernate capture os eventos de auditoria
+@EntityListeners(AuditingEntityListener.class) //  Garante que o Hibernate capture os eventos de auditoria
 public abstract class Auditable {
 
     @CreatedBy

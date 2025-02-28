@@ -58,6 +58,42 @@ public class MissaoTerrestreController {
                 missaoDTO.getNomeMissao());
         return ResponseEntity.ok(missaoService.criarMissao(missaoDTO));
     }
+    
+    @PutMapping("/{id}")
+    @Operation(summary = "Atualizar uma missão")
+    public ResponseEntity<MissaoTerrestreDTO> atualizarMissao(
+            @PathVariable Long id,
+            @Valid @RequestBody MissaoTerrestreDTO missaoDTO,
+            HttpServletRequest request) {
+
+        logger.info("[{}] [{}] Usuário: {} atualizou a missão ID {}",
+                LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
+                request.getRemoteAddr(),
+                SecurityContextHolder.getContext().getAuthentication().getName(),
+                id);
+
+        return ResponseEntity.ok(missaoService.atualizarMissao(id, missaoDTO));
+    }
+
+    @DeleteMapping("/{id}")
+    @Operation(summary = "Deletar uma missão")
+    public ResponseEntity<Void> deletarMissao(
+            @PathVariable Long id,
+            HttpServletRequest request) {
+
+        logger.info("[{}] [{}] Usuário: {} deletou a missão ID {}",
+                LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
+                request.getRemoteAddr(),
+                SecurityContextHolder.getContext().getAuthentication().getName(),
+                id);
+
+        missaoService.deletarMissao(id);
+        return ResponseEntity.noContent().build();
+    }
+    
+
+
+
 }
 
 

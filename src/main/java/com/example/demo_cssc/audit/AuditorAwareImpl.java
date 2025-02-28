@@ -11,7 +11,7 @@ public class AuditorAwareImpl implements AuditorAware<String> {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication == null || !authentication.isAuthenticated() || authentication.getPrincipal().equals("anonymousUser")) {
-            return Optional.of("Sistema"); // 🔥 Registra "Sistema" se não houver usuário autenticado
+            return Optional.of("Sistema"); //  Registra "Sistema" se não houver usuário autenticado
         }
 
         return Optional.ofNullable(authentication.getName());
