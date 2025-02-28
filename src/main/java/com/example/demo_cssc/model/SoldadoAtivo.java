@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.persistence.Id;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -22,9 +23,8 @@ public class SoldadoAtivo extends Auditable {
     @Column(nullable = false)
     private int idade;
 
-    @ManyToMany(mappedBy = "soldados", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JsonIgnore
-    private Set<MissaoTerrestre> missoes;
+    @ManyToMany(mappedBy = "soldados", fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE}) // 🔥 Agora carrega as missões automaticamente
+    private Set<MissaoTerrestre> missoes = new HashSet<>();
 
     public SoldadoAtivo() {}
 

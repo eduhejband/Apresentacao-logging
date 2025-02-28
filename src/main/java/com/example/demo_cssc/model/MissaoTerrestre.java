@@ -17,14 +17,13 @@ public class MissaoTerrestre extends Auditable {
     @Column(nullable = false)
     private String nomeMissao;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE}) // 🔥 Agora carrega as relações automaticamente
     @JoinTable(
             name = "missao_soldado",
             joinColumns = @JoinColumn(name = "missao_id"),
             inverseJoinColumns = @JoinColumn(name = "soldado_id")
     )
     private Set<SoldadoAtivo> soldados = new HashSet<>();
-
 
     public MissaoTerrestre() {}
 

@@ -66,17 +66,20 @@ public class SoldadoAtivoService {
         soldado.setNome(soldadoDTO.getNome());
         soldado.setIdade(soldadoDTO.getIdade());
 
-        if (soldadoDTO.getMissoesIds() != null && !soldadoDTO.getMissoesIds().isEmpty()) {
-            Set<MissaoTerrestre> missoes = soldadoDTO.getMissoesIds().stream()
+        if (soldadoDTO.getMissoesIds() != null) {
+            Set<MissaoTerrestre> novasMissoes = soldadoDTO.getMissoesIds().stream()
                     .map(missaoTerrestreRepository::findById)
                     .map(optional -> optional.orElseThrow(() -> new RecursoNaoEncontradoException("Missão não encontrada")))
                     .collect(Collectors.toSet());
-            soldado.setMissoes(missoes);
+
+            // 🔥 Em vez de sobrescrever, adicionamos ao conjunto existente
+            soldado.getMissoes().addAll(novasMissoes);
         }
 
         SoldadoAtivo soldadoAtualizado = soldadoRepository.save(soldado);
         return soldadoAtivoMapper.toDTO(soldadoAtualizado);
     }
+
 
     public void deletarSoldado(Long id) {
         SoldadoAtivo soldado = soldadoRepository.findById(id)

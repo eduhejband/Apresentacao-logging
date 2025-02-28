@@ -35,17 +35,22 @@ public class MissaoTerrestreService {
         MissaoTerrestre missao = missaoRepository.findById(id)
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Missão não encontrada"));
 
-        Set<SoldadoAtivo> soldados = missaoDTO.getSoldadosIds().stream()
-                .map(soldadoRepository::findById)
-                .map(optional -> optional.orElseThrow(() -> new RecursoNaoEncontradoException("Soldado não encontrado")))
-                .collect(Collectors.toSet());
-
         missao.setNomeMissao(missaoDTO.getNomeMissao());
-        missao.setSoldados(soldados);
+
+        if (missaoDTO.getSoldadosIds() != null) {
+            Set<SoldadoAtivo> novosSoldados = missaoDTO.getSoldadosIds().stream()
+                    .map(soldadoRepository::findById)
+                    .map(optional -> optional.orElseThrow(() -> new RecursoNaoEncontradoException("Soldado não encontrado")))
+                    .collect(Collectors.toSet());
+
+            // 🔥 Em vez de sobrescrever, adicionamos ao conjunto existente
+            missao.getSoldados().addAll(novosSoldados);
+        }
 
         MissaoTerrestre missaoAtualizada = missaoRepository.save(missao);
         return missaoTerrestreMapper.toDTO(missaoAtualizada);
     }
+
 
 
     public List<MissaoTerrestreDTO> listarMissoes() {
